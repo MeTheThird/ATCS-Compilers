@@ -6,25 +6,17 @@ import java.io.*;
  * ScannerTester tests the Scanner class
  * 
  * @author Rohan Thakur
- * @version 9/28/21
+ * @version 10/14/21
  */
 public class ScannerTester
 {
 
     /**
-     * Runs test() to test the Scanner class
+     * Tests the Scanner class
      * 
      * @param args the command-line input args
      */
     public static void main(String[] args)
-    {
-        test();
-    }
-
-    /**
-     * Tests the Scanner class
-     */
-    private static void test()
     {
         try
         {

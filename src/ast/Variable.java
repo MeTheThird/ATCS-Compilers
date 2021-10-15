@@ -1,11 +1,32 @@
 package ast;
 
+/**
+ * Variable represents a variable
+ * 
+ * @author Rohan Thakur
+ * @version 10/14/21
+ */
 public class Variable extends Expression
 {
-    String name;
+    private String name;
 
+    /**
+     * Variable constructor for the construction of a variable with the input name
+     * 
+     * @param name the input variable name as a String
+     */
     public Variable(String name)
     {
         this.name = name;
+    }
+
+    /**
+     * Gets the Variable object's variable name
+     * 
+     * @return the variable name of the Variable object as a String
+     */
+    public String getName()
+    {
+        return this.name;
     }
 }

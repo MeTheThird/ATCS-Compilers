@@ -1,20 +1,23 @@
 package parser;
 
 import java.io.*;
+
+import environment.Environment;
+import evaluator.Evaluator;
 import scanner.Scanner;
 
 /**
- * ParserTester tests the Parser class
+ * ParserTester tests the parsing and evaluation portions of the compiler
  * 
  * @author Rohan Thakur
- * @version 9/29/21
+ * @version 10/14/21
  */
 public class ParserTester
 {
     /**
-     * Tests the Parser class by repeatedly calling the parseStatement Parser function until the end
-     * of the input stream has been reached
-     * 
+     * Tests the parsing and evaluation portions of the compiler by repeatedly executing the output
+     * of the parseStatement Parser function until the end of the input stream has been reached
+     *
      * @param args the command-line input args
      */
     public static void main(String[] args)
@@ -22,12 +25,15 @@ public class ParserTester
         try
         {
             FileInputStream inStream = new FileInputStream(new File("./src/parser" +
-                                                                    "/parserTest4.txt"));
-            Scanner lex = new Scanner(inStream);
-            Parser parser = new Parser(lex);
-            while (lex.hasNext())
+                                                                    "/parserTest6.txt"));
+            Scanner scanner = new Scanner(inStream);
+            Parser parser = new Parser(scanner);
+            Environment env = new Environment();
+            Evaluator evaluator = new Evaluator();
+
+            while (scanner.hasNext())
             {
-                parser.parseStatement();
+                evaluator.exec(parser.parseStatement(), env);
             }
         }
         catch(FileNotFoundException e)

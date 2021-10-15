@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
  * Scanner is a simple scanner for Compilers and Interpreters (2014-2015) lab exercise 1
  * 
  * @author Rohan Thakur
- * @version 9/7/21
+ * @version 10/14/21
  */
 public class Scanner
 {
@@ -159,7 +159,7 @@ public class Scanner
             ret += currentChar;
             eat(currentChar);
         }
-        
+
         if (hasNext() && !isWhiteSpace(currentChar) && !isOperand(currentChar))
             throw new ScanErrorException("Error: expected a number, white space, or an operand" +
                                             " and found " + currentChar);
@@ -185,7 +185,7 @@ public class Scanner
             ret += currentChar;
             eat(currentChar);
         }
-        
+
         if (hasNext() && !isWhiteSpace(currentChar) && !isOperand(currentChar))
             throw new ScanErrorException("Error: expected a number, letter, white space, or an " +
                                             "operand and found " + currentChar);
@@ -216,11 +216,16 @@ public class Scanner
                 ret += currentChar;
                 eat(currentChar);
             }
+            else if (currentChar == '>' && prevChar == '<')
+            {
+                ret += currentChar;
+                eat(currentChar);
+            }
         }
-        
+
         if (!Pattern.matches("[-=+*/%();:<>]+", ret))
             throw new ScanErrorException("Error: expected an operand and found " + ret);
-        
+
         if (hasNext() && !isWhiteSpace(currentChar) && !isLetter(currentChar) &&
                 !isDigit(currentChar) && !isOperand(currentChar))
             throw new ScanErrorException("Error: expected a number, letter, white space, or an " +
@@ -243,18 +248,18 @@ public class Scanner
     {
         while (hasNext() && isWhiteSpace(currentChar))
             eat(currentChar);
-        
+
         if (!hasNext() || currentChar == '.')
         {
             eof = true;
             return "END";
         }
-        
+
         if (isDigit(currentChar))
             return scanNumber();
         else if (isLetter(currentChar))
             return scanIdentifier();
-        
+
         String ret = scanOperand();
         char prevChar = ret.charAt(0);
         if (prevChar == '/' && currentChar == '/')
