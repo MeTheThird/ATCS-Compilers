@@ -2,6 +2,9 @@ package environment;
 
 import java.util.HashMap;
 
+import ast.Statement;
+// TODO: update documentation (esp. the general class documentation) to include procedure stuff
+// TODO: also update stuff for accessing parents
 /**
  * Environment manages creating, updating, and fetching the values of variables
  * 
@@ -10,7 +13,21 @@ import java.util.HashMap;
  */
 public class Environment 
 {
-    HashMap<String, Integer> vars = new HashMap<String, Integer>();
+    private HashMap<String, Integer> vars;
+    private HashMap<String, Statement> procedures;
+    private Environment parentEnv;
+
+    public Environment(Environment parentEnv)
+    {
+        vars = new HashMap<String, Integer>();
+        procedures = new HashMap<String, Statement>();
+        this.parentEnv = parentEnv;
+    }
+
+    public Environment getParentEnv()
+    {
+        return this.parentEnv;
+    }
 
     /**
      * Sets the input variable to the input value
@@ -32,5 +49,17 @@ public class Environment
     public int getVariable(String variable)
     {
         return vars.get(variable);
+    }
+
+    public void setProcedure(String procedure, Statement stmt)
+    {
+        if (this.parentEnv == null) procedures.put(procedure, stmt);
+        else this.parentEnv.setProcedure(procedure, stmt);
+    }
+
+    public Statement getProcedure(String procedure)
+    {
+        if (this.parentEnv == null) return procedures.get(procedure);
+        return this.parentEnv.getProcedure(procedure);
     }
 }

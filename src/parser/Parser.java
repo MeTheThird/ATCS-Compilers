@@ -64,6 +64,32 @@ public class Parser
                                             " and found " + currentToken);
     }
 
+    public Program parseProgram()
+    {
+        List<ProcedureDeclaration> procedures = new ArrayList<ProcedureDeclaration>();
+        List<Statement> stmts = new ArrayList<Statement>();
+        while (currentToken.equals("PROCEDURE"))
+        {
+            eat("PROCEDURE");
+            String procedureName = currentToken;
+            eat(currentToken);
+            eat("(");
+            eat(")");
+            eat(";");
+            Statement stmt = parseStatement();
+
+            procedures.add(new ProcedureDeclaration(procedureName, stmt));
+        }
+
+        while (!currentToken.equals("END"))
+        {
+            Statement stmt = parseStatement();
+            stmts.add(stmt);
+        }
+
+        return new Program(procedures, stmts);
+    }
+
     /**
      * Parses the current integer
      *
@@ -88,7 +114,7 @@ public class Parser
      * statement's associated tokens have been eaten
      * @return a Statement AST object that represents the current statement
      */
-    public Statement parseStatement()
+    private Statement parseStatement()
     {
         switch (currentToken)
         {
@@ -198,9 +224,15 @@ public class Parser
         {
             return parseNumber();
         }
-        String varName = currentToken;
-        eat(varName);
-        return new Variable(varName);
+        String id = currentToken;
+        eat(id);
+        if (currentToken.equals("("))
+        {
+            eat("(");
+            eat(")");
+            return new ProcedureCall(id);
+        }
+        return new Variable(id);
     }
 
     /**

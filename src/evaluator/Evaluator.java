@@ -13,13 +13,21 @@ import environment.Environment;
 public class Evaluator
 {
 
+    public void exec(Program program, Environment env)
+    {
+        for (ProcedureDeclaration procedure : program.getProcedures())
+            env.setProcedure(procedure.getName(), procedure.getStmt());
+        for (Statement stmt : program.getStmts())
+            exec(stmt, env);
+    }
+
     /**
      * Executes the input statement
      * 
      * @param stmt the input statement
      * @param env the environment to use for variables
      */
-    public void exec(Statement stmt, Environment env)
+    private void exec(Statement stmt, Environment env)
     {
         if (stmt.getClass() == Writeln.class) exec((Writeln) stmt, env);
         else if (stmt.getClass() == Assignment.class) exec((Assignment) stmt, env);
@@ -34,7 +42,7 @@ public class Evaluator
      * @param writeln the input Writeln statement
      * @param env the environment to use for variables
      */
-    public void exec(Writeln writeln, Environment env)
+    private void exec(Writeln writeln, Environment env)
     {
         System.out.println(eval(writeln.getExpression(), env));
     }
@@ -45,7 +53,7 @@ public class Evaluator
      * @param assignment the input Assignment statement
      * @param env the environment to use for variables
      */
-    public void exec(Assignment assignment, Environment env)
+    private void exec(Assignment assignment, Environment env)
     {
         env.setVariable(assignment.getVar(), eval(assignment.getExp(), env));
     }
@@ -56,7 +64,7 @@ public class Evaluator
      * @param block the input Block statement
      * @param env the environment to use for variables
      */
-    public void exec(Block block, Environment env)
+    private void exec(Block block, Environment env)
     {
         for (Statement stmt : block.getStmts()) exec(stmt, env);
     }
@@ -67,7 +75,7 @@ public class Evaluator
      * @param ifStmt the input If statement
      * @param env the environment to use for variables
      */
-    public void exec(If ifStmt, Environment env)
+    private void exec(If ifStmt, Environment env)
     {
         if (eval(ifStmt.getCond(), env)) exec(ifStmt.getStmt(), env);
     }
@@ -78,7 +86,7 @@ public class Evaluator
      * @param whileStmt the input While statement
      * @param env the environment to use for variables
      */
-    public void exec(While whileStmt, Environment env)
+    private void exec(While whileStmt, Environment env)
     {
         while (eval(whileStmt.getCond(), env)) exec(whileStmt.getStmt(), env);
     }
@@ -90,11 +98,20 @@ public class Evaluator
      * @param env the environment to use for variables
      * @return the value of the input expression
      */
-    public int eval(Expression exp, Environment env)
+    private int eval(Expression exp, Environment env)
     {
         if (exp.getClass() == Number.class) return eval((Number) exp, env);
         if (exp.getClass() == Variable.class) return eval((Variable) exp, env);
-        return eval((BinOp) exp, env);
+        if (exp.getClass() == BinOp.class) return eval((BinOp) exp, env);
+        if (env.getParentEnv() == null)
+        {
+            exec(env.getProcedure(((ProcedureCall) exp).getName()), env);
+        }
+        else
+        {
+            exec(env.getProcedure(((ProcedureCall) exp).getName()), env.getParentEnv());
+        }
+        return 0;
     }
 
     /**
@@ -104,7 +121,7 @@ public class Evaluator
      * @param env the environment to use for variables
      * @return the value of the input Number object
      */
-    public int eval(Number num, Environment env)
+    private int eval(Number num, Environment env)
     {
         return num.getValue();
     }
@@ -116,7 +133,7 @@ public class Evaluator
      * @param env the environment to use for variables
      * @return the value of the input Variable
      */
-    public int eval(Variable var, Environment env)
+    private int eval(Variable var, Environment env)
     {
         return env.getVariable(var.getName());
     }
@@ -128,7 +145,7 @@ public class Evaluator
      * @param env the environment to use for variables
      * @return the value of the input BinOp expression
      */
-    public int eval(BinOp binop, Environment env)
+    private int eval(BinOp binop, Environment env)
     {
         int exp1Val = eval(binop.getExp1(), env);
         int exp2Val = eval(binop.getExp2(), env);

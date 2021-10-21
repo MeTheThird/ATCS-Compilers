@@ -25,15 +25,15 @@ public class ParserTester
         try
         {
             FileInputStream inStream = new FileInputStream(new File("./src/parser" +
-                                                                    "/parserTest6.txt"));
+                                                                    "/parserTest7.txt"));
             Scanner scanner = new Scanner(inStream);
             Parser parser = new Parser(scanner);
-            Environment env = new Environment();
+            Environment env = new Environment(null);
             Evaluator evaluator = new Evaluator();
 
             while (scanner.hasNext())
             {
-                evaluator.exec(parser.parseStatement(), env);
+                evaluator.exec(parser.parseProgram(), env);
             }
         }
         catch(FileNotFoundException e)
