@@ -4,8 +4,9 @@ import ast.*;
 import ast.Number;
 import environment.Environment;
 
+// TODO: exec Program documentation, check eval Expression documentation
 /**
- * Evaluator executes and evaluates AST Statements and Expressions
+ * Evaluator executes Programs comprised of AST Statements and Expressions
  * 
  * @author Rohan Thakur
  * @version 10/14/21
@@ -16,7 +17,7 @@ public class Evaluator
     public void exec(Program program, Environment env)
     {
         for (ProcedureDeclaration procedure : program.getProcedures())
-            env.setProcedure(procedure.getName(), procedure.getStmt());
+            env.setProcedure(procedure.getName(), procedure.getParams(), procedure.getStmt());
         for (Statement stmt : program.getStmts())
             exec(stmt, env);
     }
@@ -103,14 +104,20 @@ public class Evaluator
         if (exp.getClass() == Number.class) return eval((Number) exp, env);
         if (exp.getClass() == Variable.class) return eval((Variable) exp, env);
         if (exp.getClass() == BinOp.class) return eval((BinOp) exp, env);
-        if (env.getParentEnv() == null)
+
+        ProcedureCall procedureCall = (ProcedureCall) exp;
+        Environment procedureEnv;
+
+        if (env.getParentEnv() == null) procedureEnv = new Environment(env);
+        else procedureEnv = new Environment(env.getParentEnv());
+        assert (env.getParams(procedureCall.getName()).size() == procedureCall.getArgs().size());
+        for (int i = 0; i < procedureCall.getArgs().size(); i++)
         {
-            exec(env.getProcedure(((ProcedureCall) exp).getName()), env);
+            int value = eval(procedureCall.getArgs().get(i), env);
+            procedureEnv.declareVariable(env.getParams(procedureCall.getName()).get(i), value);
         }
-        else
-        {
-            exec(env.getProcedure(((ProcedureCall) exp).getName()), env.getParentEnv());
-        }
+
+        exec(env.getProcedure(procedureCall.getName()), procedureEnv);
         return 0;
     }
 

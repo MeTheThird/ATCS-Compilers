@@ -139,7 +139,7 @@ public class Scanner
      */
     public static boolean isOperand(char inChar)
     {
-        return Pattern.matches("[-=+*/%();:<>]", "" + inChar);
+        return Pattern.matches("[-=+*/%();:<>,]", "" + inChar);
     }
 
     /**
@@ -223,7 +223,7 @@ public class Scanner
             }
         }
 
-        if (!Pattern.matches("[-=+*/%();:<>]+", ret))
+        if (!Pattern.matches("[-=+*/%();:<>,]+", ret))
             throw new ScanErrorException("Error: expected an operand and found " + ret);
 
         if (hasNext() && !isWhiteSpace(currentChar) && !isLetter(currentChar) &&

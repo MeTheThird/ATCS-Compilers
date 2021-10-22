@@ -64,6 +64,8 @@ public class Parser
                                             " and found " + currentToken);
     }
 
+// TODO: parseProgram documentation, check parseFactor documentation
+
     public Program parseProgram()
     {
         List<ProcedureDeclaration> procedures = new ArrayList<ProcedureDeclaration>();
@@ -74,11 +76,23 @@ public class Parser
             String procedureName = currentToken;
             eat(currentToken);
             eat("(");
+            List<String> params = new ArrayList<String>();
+            if (!currentToken.equals(")"))
+            {
+                params.add(currentToken);
+                eat(currentToken);
+                while (!currentToken.equals(")"))
+                {
+                    eat(",");
+                    params.add(currentToken);
+                    eat(currentToken);
+                }
+            }
             eat(")");
             eat(";");
             Statement stmt = parseStatement();
 
-            procedures.add(new ProcedureDeclaration(procedureName, stmt));
+            procedures.add(new ProcedureDeclaration(procedureName, params, stmt));
         }
 
         while (!currentToken.equals("END"))
@@ -229,8 +243,18 @@ public class Parser
         if (currentToken.equals("("))
         {
             eat("(");
+            List<Expression> args = new ArrayList<Expression>();
+            if (!currentToken.equals(")"))
+            {
+                args.add(parseExpr());
+                while (!currentToken.equals(")"))
+                {
+                    eat(",");
+                    args.add(parseExpr());
+                }
+            }
             eat(")");
-            return new ProcedureCall(id);
+            return new ProcedureCall(id, args);
         }
         return new Variable(id);
     }
