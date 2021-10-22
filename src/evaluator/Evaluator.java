@@ -4,16 +4,21 @@ import ast.*;
 import ast.Number;
 import environment.Environment;
 
-// TODO: exec Program documentation, check eval Expression documentation
 /**
  * Evaluator executes Programs comprised of AST Statements and Expressions
  * 
  * @author Rohan Thakur
- * @version 10/14/21
+ * @version 10/22/21
  */
 public class Evaluator
 {
 
+    /**
+     * Executes the input program under the input environment
+     * 
+     * @param program the input program
+     * @param env the environment to use for variables and procedures
+     */
     public void exec(Program program, Environment env)
     {
         for (ProcedureDeclaration procedure : program.getProcedures())
@@ -26,7 +31,7 @@ public class Evaluator
      * Executes the input statement
      * 
      * @param stmt the input statement
-     * @param env the environment to use for variables
+     * @param env the environment to use for variables and procedures
      */
     private void exec(Statement stmt, Environment env)
     {
@@ -41,7 +46,7 @@ public class Evaluator
      * Executes the input Writeln statement
      * 
      * @param writeln the input Writeln statement
-     * @param env the environment to use for variables
+     * @param env the environment to use for variables and procedures
      */
     private void exec(Writeln writeln, Environment env)
     {
@@ -52,7 +57,7 @@ public class Evaluator
      * Executes the input Assignment statement
      * 
      * @param assignment the input Assignment statement
-     * @param env the environment to use for variables
+     * @param env the environment to use for variables and procedures
      */
     private void exec(Assignment assignment, Environment env)
     {
@@ -63,7 +68,7 @@ public class Evaluator
      * Executes the input Block statement
      * 
      * @param block the input Block statement
-     * @param env the environment to use for variables
+     * @param env the environment to use for variables and procedures
      */
     private void exec(Block block, Environment env)
     {
@@ -74,7 +79,7 @@ public class Evaluator
      * Executes the input If statement
      * 
      * @param ifStmt the input If statement
-     * @param env the environment to use for variables
+     * @param env the environment to use for variables and procedures
      */
     private void exec(If ifStmt, Environment env)
     {
@@ -85,7 +90,7 @@ public class Evaluator
      * Executes the input While statement
      * 
      * @param whileStmt the input While statement
-     * @param env the environment to use for variables
+     * @param env the environment to use for variables and procedures
      */
     private void exec(While whileStmt, Environment env)
     {
@@ -96,7 +101,7 @@ public class Evaluator
      * Evaluates the input expression
      * 
      * @param exp the input expression
-     * @param env the environment to use for variables
+     * @param env the environment to use for variables and procedures
      * @return the value of the input expression
      */
     private int eval(Expression exp, Environment env)
@@ -111,6 +116,7 @@ public class Evaluator
         if (env.getParentEnv() == null) procedureEnv = new Environment(env);
         else procedureEnv = new Environment(env.getParentEnv());
         assert (env.getParams(procedureCall.getName()).size() == procedureCall.getArgs().size());
+        procedureEnv.declareVariable(procedureCall.getName(), 0);
         for (int i = 0; i < procedureCall.getArgs().size(); i++)
         {
             int value = eval(procedureCall.getArgs().get(i), env);
@@ -118,14 +124,14 @@ public class Evaluator
         }
 
         exec(env.getProcedure(procedureCall.getName()), procedureEnv);
-        return 0;
+        return procedureEnv.getVariable(procedureCall.getName());
     }
 
     /**
      * Evaluates the input Number object
      * 
      * @param num the input Number object
-     * @param env the environment to use for variables
+     * @param env the environment to use for variables and procedures
      * @return the value of the input Number object
      */
     private int eval(Number num, Environment env)
@@ -137,7 +143,7 @@ public class Evaluator
      * Evaluates the input Variable
      * 
      * @param var the input Variable
-     * @param env the environment to use for variables
+     * @param env the environment to use for variables and procedures
      * @return the value of the input Variable
      */
     private int eval(Variable var, Environment env)
@@ -149,7 +155,7 @@ public class Evaluator
      * Evaluates the input BinOp expression
      * 
      * @param binop the input BinOp expression
-     * @param env the environment to use for variables
+     * @param env the environment to use for variables and procedures
      * @return the value of the input BinOp expression
      */
     private int eval(BinOp binop, Environment env)
@@ -169,7 +175,7 @@ public class Evaluator
      * Evaluates the input Condition
      * 
      * @param cond the input Condition
-     * @param env the environment to use for variables
+     * @param env the environment to use for variables and procedures
      * @return true if the input Condition evaluates to true, false otherwise
      */
     public boolean eval(Condition cond, Environment env)

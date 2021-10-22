@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
  * Scanner is a simple scanner for Compilers and Interpreters (2014-2015) lab exercise 1
  * 
  * @author Rohan Thakur
- * @version 10/14/21
+ * @version 10/22/21
  */
 public class Scanner
 {

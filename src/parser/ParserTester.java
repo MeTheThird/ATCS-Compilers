@@ -10,13 +10,13 @@ import scanner.Scanner;
  * ParserTester tests the parsing and evaluation portions of the compiler
  * 
  * @author Rohan Thakur
- * @version 10/14/21
+ * @version 10/22/21
  */
 public class ParserTester
 {
     /**
-     * Tests the parsing and evaluation portions of the compiler by repeatedly executing the output
-     * of the parseStatement Parser function until the end of the input stream has been reached
+     * Tests the parsing and evaluation portions of the compiler by executing the output
+     * of the parseProgram Parser function
      *
      * @param args the command-line input args
      */
@@ -31,10 +31,7 @@ public class ParserTester
             Environment env = new Environment(null);
             Evaluator evaluator = new Evaluator();
 
-            while (scanner.hasNext())
-            {
-                evaluator.exec(parser.parseProgram(), env);
-            }
+            evaluator.exec(parser.parseProgram(), env);
         }
         catch(FileNotFoundException e)
         {

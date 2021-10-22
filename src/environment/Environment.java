@@ -4,15 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import ast.Statement;
-// TODO: update documentation (esp. the general class documentation) to include procedure stuff
-// TODO: also update stuff for accessing parents
-// TODO: update the documentation of each method because they now access parent stuff, and the usage
-// TODO: of setVariable has changed
+
 /**
- * Environment manages creating, updating, and fetching the values of variables
- * 
+ * Environment manages creating, updating, and fetching variables and procedures
+ *
  * @author Rohan Thakur
- * @version 10/14/21
+ * @version 10/22/21
  */
 public class Environment
 {
@@ -20,6 +17,12 @@ public class Environment
     private HashMap<String, ParamsStatementPair> procedures;
     private Environment parentEnv;
 
+    /**
+     * Environment constructor fro the construction of an Environment object to use for storing
+     * procedures and variables, with a reference to its parent environment
+     *
+     * @param parentEnv the parent environment of the current Environment object
+     */
     public Environment(Environment parentEnv)
     {
         this.vars = new HashMap<String, Integer>();
@@ -27,20 +30,34 @@ public class Environment
         this.parentEnv = parentEnv;
     }
 
+    /**
+     * Gets the Environment object's parent environment
+     *
+     * @return the Environment object representing the Environment object's parent environment
+     */
     public Environment getParentEnv()
     {
         return this.parentEnv;
     }
 
+    /**
+     * Declares a variable to have a given value in the current environment
+     *
+     * @param variable the name of the variable to declare
+     * @param value the value to assign to the variable
+     */
     public void declareVariable(String variable, int value)
     {
         this.vars.put(variable, value);
     }
 
     /**
-     * Sets the input variable to the input value
-     * 
-     * @param variable the input variable name
+     * Sets the input variable to the input value in the parent environment if the parent
+     * environment exists, the variable doesn't exist in the current environment, and the variable
+     * exists in the parent environment. Sets the input variable to the input value in the current
+     * environment otherwise
+     *
+     * @param variable the name of the input variable
      * @param value the input value
      */
     public void setVariable(String variable, int value)
@@ -52,9 +69,11 @@ public class Environment
     }
 
     /**
-     * Gets the value of the input variable name
-     * 
-     * @param variable the input variable name
+     * Gets the value of the input variable from the current environment if the variable exists in
+     * the current environment, gets the input variable's value from the parent environment
+     * otherwise
+     *
+     * @param variable the name of the input variable
      * @return the value of the input variable
      */
     public int getVariable(String variable)
@@ -63,6 +82,13 @@ public class Environment
         return this.parentEnv.getVariable(variable);
     }
 
+    /**
+     * Declares the input procedure in the global environment
+     *
+     * @param procedure the name of the input procedure
+     * @param params the list of parameters for the input procedure
+     * @param stmt the statement that calling the input procedure will execute
+     */
     public void setProcedure(String procedure, List<String> params, Statement stmt)
     {
         if (this.parentEnv == null)
@@ -70,12 +96,26 @@ public class Environment
         else this.parentEnv.setProcedure(procedure, params, stmt);
     }
 
+    /**
+     * Gets the statement that calling the input procedure will execute
+     *
+     * @param procedure the name of the input procedure
+     * @return the Statement AST object that represents the statement that calling the input
+     * procedure will execute
+     */
     public Statement getProcedure(String procedure)
     {
         if (this.parentEnv == null) return this.procedures.get(procedure).getSecond();
         return this.parentEnv.getProcedure(procedure);
     }
 
+    /**
+     * Gets the list of parameters for the input procedure
+     *
+     * @param procedure the name of the input procedure
+     * @return the List object of Strings that represents the list of parameters for the input
+     * procedure
+     */
     public List<String> getParams(String procedure)
     {
         if (this.parentEnv == null) return this.procedures.get(procedure).getFirst();

@@ -11,7 +11,7 @@ import scanner.Scanner;
  * Parser parses the input lexemes from an instance of the Scanner class
  *
  * @author Rohan Thakur
- * @version 10/14/21
+ * @version 10/22/21
  */
 public class Parser
 {
@@ -64,8 +64,14 @@ public class Parser
                                             " and found " + currentToken);
     }
 
-// TODO: parseProgram documentation, check parseFactor documentation
-
+    /**
+     * Parses the current program
+     * 
+     * @precondition currentToken begins a program
+     * @postcondition currentToken has advanced to the end of the input stream, and all of the
+     * tokens in the input stream have been eaten
+     * @return a Program AST object that represents the parsed program
+     */
     public Program parseProgram()
     {
         List<ProcedureDeclaration> procedures = new ArrayList<ProcedureDeclaration>();
