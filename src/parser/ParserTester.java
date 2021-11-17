@@ -2,6 +2,7 @@ package parser;
 
 import java.io.*;
 
+import compiler.Compiler;
 import environment.Environment;
 import evaluator.Evaluator;
 import scanner.Scanner;
@@ -10,7 +11,7 @@ import scanner.Scanner;
  * ParserTester tests the parsing and evaluation portions of the compiler
  * 
  * @author Rohan Thakur
- * @version 10/22/21
+ * @version 11/17/21
  */
 public class ParserTester
 {
@@ -25,13 +26,14 @@ public class ParserTester
         try
         {
             FileInputStream inStream = new FileInputStream(new File("./src/parser" +
-                                                                    "/parserTest8.txt"));
+                                                                    "/parserTest0.txt"));
             Scanner scanner = new Scanner(inStream);
             Parser parser = new Parser(scanner);
             Environment env = new Environment(null);
             Evaluator evaluator = new Evaluator();
+            Compiler compiler = new Compiler();
 
-            evaluator.exec(parser.parseProgram(), env);
+            compiler.compile(parser.parseProgram(), "output.asm");
         }
         catch(FileNotFoundException e)
         {
