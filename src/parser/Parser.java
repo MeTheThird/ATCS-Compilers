@@ -78,7 +78,7 @@ public class Parser
         List<ProcedureDeclaration> procedures = new ArrayList<ProcedureDeclaration>();
         List<Statement> stmts = new ArrayList<Statement>();
 
-        if (currentToken.equals("VAR"))
+        while (currentToken.equals("VAR"))
         {
             eat("VAR");
             while (!currentToken.equals(";"))
