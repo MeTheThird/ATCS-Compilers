@@ -5,12 +5,12 @@ import java.time.LocalDate;
 import ast.*;
 import ast.Number;
 import emitter.Emitter;
-
+// TODO: update class documentation including class header (esp the version)
 /**
  * Compiler compiles Program objects into MIPS Assembly code
  * 
  * @author Rohan Thakur
- * @version 11/19/21
+ * @version 12/2/21
  */
 public class Compiler
 {
@@ -36,8 +36,9 @@ public class Compiler
         e.emit(".globl main");
         e.emit("main:");
         for (Statement stmt : program.getStmts()) compile(stmt);
-        e.emit("li $v0 10\t # normal program termination");
+        e.emit("li $v0 10\t# normal program termination");
         e.emit("syscall");
+        for (ProcedureDeclaration procedure : program.getProcedures()) compile(procedure);
         e.close();
     }
 
@@ -75,7 +76,7 @@ public class Compiler
     private void compile(Writeln writeln)
     {
         compile(writeln.getExpression());
-        e.emit("move $a0 $v0\t # prints out $v0 followed by a new line char");
+        e.emit("move $a0 $v0\t# prints out $v0 followed by a new line char");
         e.emit("li $v0 1");
         e.emit("syscall");
         e.emit("la $a0 newLine");
@@ -101,7 +102,7 @@ public class Compiler
     private void compile(Assignment assignment)
     {
         compile(assignment.getExp());
-        e.emit("sw $v0 var" + assignment.getVar() + "\t # stores $v0 in var" + assignment.getVar());
+        e.emit("sw $v0 var" + assignment.getVar() + "\t# stores $v0 in var" + assignment.getVar());
     }
 
     /**
@@ -127,11 +128,18 @@ public class Compiler
         int labelID = e.nextLabelID();
         String beginLabel = "beginwhile" + labelID;
         String endLabel = "endwhile" + labelID;
-        e.emit(beginLabel + ":");
+        e.emit(beginLabel + ":\t# begins the while loop");
         compile(whileStmt.getCond(), endLabel);
         compile(whileStmt.getStmt());
-        e.emit("j " + beginLabel + "\t # restarts the while loop");
+        e.emit("j " + beginLabel + "\t# restarts the while loop");
         e.emit(endLabel + ":");
+    }
+
+    private void compile(ProcedureDeclaration procedure)
+    {
+        e.emit("proc" + procedure.getName() + ":\t# begins the procedure " + procedure.getName());
+        compile(procedure.getStmt());
+        e.emit("jr $ra");
     }
 
     /**
@@ -141,7 +149,7 @@ public class Compiler
      */
     private void compile(Number num)
     {
-        e.emit("li $v0 " + num.getValue() + "\t # loads " + num.getValue() + " into $v0");
+        e.emit("li $v0 " + num.getValue() + "\t# loads " + num.getValue() + " into $v0");
     }
 
     /**
@@ -158,17 +166,17 @@ public class Compiler
         switch (binop.getOp())
         {
             case "+":
-                e.emit("add $v0 $t0 $v0\t # adds $t0 and $v0, stores the result in $v0");
+                e.emit("add $v0 $t0 $v0\t# adds $t0 and $v0, stores the result in $v0");
                 return;
             case "-":
-                e.emit("sub $v0 $t0 $v0\t # does $t0 minus $v0, stores the result in $v0");
+                e.emit("sub $v0 $t0 $v0\t# does $t0 minus $v0, stores the result in $v0");
                 return;
             case "*":
-                e.emit("mult $t0 $v0\t # multiplies $t0 and $v0, stores the result in $v0");
+                e.emit("mult $t0 $v0\t# multiplies $t0 and $v0, stores the result in $v0");
                 e.emit("mflo $v0");
                 return;
             default:
-                e.emit("div $t0 $v0\t # divides $t0 by $v0, stores the result in $v0");
+                e.emit("div $t0 $v0\t# divides $t0 by $v0, stores the result in $v0");
                 e.emit("mflo $v0");
                 return;
         }
@@ -181,7 +189,7 @@ public class Compiler
      */
     private void compile(Variable var)
     {
-        e.emit("lw $v0 var" + var.getName() + "\t # loads var" + var.getName() + " into $v0");
+        e.emit("lw $v0 var" + var.getName() + "\t# loads var" + var.getName() + " into $v0");
     }
 
     /**
@@ -200,27 +208,27 @@ public class Compiler
         switch (cond.getRelop())
         {
             case "=":
-                e.emit("bne $t0 $v0 " + endLabel + "\t # executes the code below if $t0 " +
+                e.emit("bne $t0 $v0 " + endLabel + "\t# executes the code below if $t0 " +
                                                    "equals $v0");
                 return;
             case "<>":
-                e.emit("beq $t0 $v0 " + endLabel + "\t # executes the code below if $t0 " +
+                e.emit("beq $t0 $v0 " + endLabel + "\t# executes the code below if $t0 " +
                                                    "does not equal $v0");
                 return;
             case "<":
-                e.emit("bge $t0 $v0 " + endLabel + "\t # executes the code below if $t0 " +
+                e.emit("bge $t0 $v0 " + endLabel + "\t# executes the code below if $t0 " +
                                                    "is less than $v0");
                 return;
             case ">":
-                e.emit("ble $t0 $v0 " + endLabel + "\t # executes the code below if $t0 " +
+                e.emit("ble $t0 $v0 " + endLabel + "\t# executes the code below if $t0 " +
                                                    "is greater than $v0");
                 return;
             case "<=":
-                e.emit("bgt $t0 $v0 " + endLabel + "\t # executes the code below if $t0 " +
+                e.emit("bgt $t0 $v0 " + endLabel + "\t# executes the code below if $t0 " +
                                                    "is less than or equal to $v0");
                 return;
             default:
-                e.emit("blt $t0 $v0 " + endLabel + "\t # executes the code below if $t0 " +
+                e.emit("blt $t0 $v0 " + endLabel + "\t# executes the code below if $t0 " +
                                                    "is greater than or equal to $v0");
                 return;
         }

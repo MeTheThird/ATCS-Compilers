@@ -39,7 +39,7 @@ public class Emitter
      */
     public void emit(String code)
     {
-        if (!code.endsWith(":"))
+        if (!code.contains(":"))
             code = "\t" + code;
         out.println(code);
     }
