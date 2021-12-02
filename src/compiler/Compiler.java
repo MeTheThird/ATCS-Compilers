@@ -65,7 +65,8 @@ public class Compiler
     {
         if (exp.getClass() == Number.class) compile((Number) exp);
         else if (exp.getClass() == BinOp.class) compile((BinOp) exp);
-        else compile((Variable) exp);
+        else if (exp.getClass() == Variable.class) compile((Variable) exp);
+        else compile((ProcedureCall) exp);
     }
 
     /**
@@ -190,6 +191,19 @@ public class Compiler
     private void compile(Variable var)
     {
         e.emit("lw $v0 var" + var.getName() + "\t# loads var" + var.getName() + " into $v0");
+    }
+
+    private void compile(ProcedureCall procedureCall)
+    {
+        e.emitPush("$ra");
+        for (Expression arg : procedureCall.getArgs())
+        {
+            compile(arg);
+            e.emitPush("$v0");
+        }
+        e.emit("jal proc" + procedureCall.getName() + "\t# calls " + procedureCall.getName());
+        for (int i = 0; i < procedureCall.getArgs().size(); i++) e.emitPop("$t0");
+        e.emitPop("$ra");
     }
 
     /**

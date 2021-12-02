@@ -59,7 +59,7 @@ public class Emitter
      */
     public void emitPush(String reg)
     {
-        this.emit("sub $sp $sp 4 \t # pushes " + reg + " onto the stack");
+        this.emit("sub $sp $sp 4\t# pushes " + reg + " onto the stack");
         this.emit("sw " + reg + " ($sp)");
     }
 
@@ -70,7 +70,7 @@ public class Emitter
      */
     public void emitPop(String reg)
     {
-        this.emit("lw " + reg + " ($sp) \t # pops the top of the stack into " + reg);
+        this.emit("lw " + reg + " ($sp)\t# pops the top of the stack into " + reg);
         this.emit("add $sp $sp 4");
     }
 
