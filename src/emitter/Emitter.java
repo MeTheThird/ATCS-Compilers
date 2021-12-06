@@ -1,7 +1,10 @@
 package emitter;
 
 import java.io.*;
+import java.util.HashMap;
 
+import ast.ProcedureDeclaration;
+// TODO: update class documentation (check class header too, including the date)
 /**
  * Emitter emits lines of MIPS Assembly code to an output file
  * 
@@ -12,6 +15,7 @@ public class Emitter
 {
     private PrintWriter out;
     private int counter;
+    private ProcedureDeclaration context;
 
     /**
      * Emitter constructor for the construction of an Emitter that writes to a new file with a given
@@ -30,6 +34,7 @@ public class Emitter
             throw new RuntimeException(e);
         }
         counter = 0;
+        context = null;
     }
 
     /**
@@ -50,6 +55,37 @@ public class Emitter
     public void close()
     {
         out.close();
+    }
+//remember proc as current procedure context
+    public void setProcedureContext(ProcedureDeclaration proc)
+    {
+        this.context = proc;
+    }
+//clear current procedure context (remember null) 
+    public void clearProcedureContext()
+    {
+        this.context = null;
+    }
+
+    public boolean isLocalVariable(String varName)
+    {
+        if (this.context != null)
+        {
+            for (String var : this.context.getParams()) if (varName.equals(var)) return true;
+        }
+        return false;
+    }
+
+//precondition: localVarName is the name of a local
+// variable for the procedure currently
+// being compiled
+    public int getOffset(String localVarName)
+    {
+        for (int i = 0; i < context.getParams().size() - 1; i++)
+            if (localVarName.equals(context.getParams().get(i)))
+                return 4 * (context.getParams().size() - 1 - i);
+        assert(localVarName.equals(context.getParams().get(context.getParams().size() - 1)));
+        return 0;
     }
 
     /**

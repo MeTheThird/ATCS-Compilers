@@ -138,9 +138,11 @@ public class Compiler
 
     private void compile(ProcedureDeclaration procedure)
     {
+        e.setProcedureContext(procedure);
         e.emit("proc" + procedure.getName() + ":\t# begins the procedure " + procedure.getName());
         compile(procedure.getStmt());
         e.emit("jr $ra");
+        e.clearProcedureContext();
     }
 
     /**
@@ -190,7 +192,16 @@ public class Compiler
      */
     private void compile(Variable var)
     {
-        e.emit("lw $v0 var" + var.getName() + "\t# loads var" + var.getName() + " into $v0");
+        if (e.isLocalVariable(var.getName()))
+        {
+            e.emit("lw $v0 " + e.getOffset(var.getName()) + "($sp)\t# loads the local variable " +
+                    var.getName() + " into $v0");
+        }
+        else
+        {
+            e.emit("lw $v0 var" + var.getName() + "\t# loads the global variable var" +
+                    var.getName() + " into $v0");
+        }
     }
 
     private void compile(ProcedureCall procedureCall)
