@@ -3,7 +3,7 @@ package evaluator;
 import ast.*;
 import ast.Number;
 import environment.Environment;
-
+// TODO: update class documentation (incl. class header esp. the date)
 /**
  * Evaluator executes Programs comprised of AST Statements and Expressions
  * 
@@ -22,7 +22,8 @@ public class Evaluator
     public void exec(Program program, Environment env)
     {
         for (ProcedureDeclaration procedure : program.getProcedures())
-            env.setProcedure(procedure.getName(), procedure.getParams(), procedure.getStmt());
+            env.setProcedure(procedure.getName(), procedure.getParams(), procedure.getStmt(),
+                procedure.getLocalVars());
         for (Statement stmt : program.getStmts())
             exec(stmt, env);
     }
@@ -122,6 +123,9 @@ public class Evaluator
             int value = eval(procedureCall.getArgs().get(i), env);
             procedureEnv.declareVariable(env.getParams(procedureCall.getName()).get(i), value);
         }
+
+        for (int i = 0; i < env.getLocalVars(procedureCall.getName()).size(); i++)
+            procedureEnv.declareVariable(env.getLocalVars(procedureCall.getName()).get(i), 0);
 
         exec(env.getProcedure(procedureCall.getName()), procedureEnv);
         return procedureEnv.getVariable(procedureCall.getName());

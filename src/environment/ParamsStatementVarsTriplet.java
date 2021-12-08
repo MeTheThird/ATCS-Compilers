@@ -3,7 +3,8 @@ package environment;
 import java.util.List;
 
 import ast.Statement;
-
+// TODO: update class documentation (incl. the class header esp. the date)
+// TODO: this class's name was changed, so update that in the documentation
 /**
  * ParamsStatementPair represents the pair of the List object representing a procedure's parameters
  * and the Statement object representing the statement that calling the procedure will execute
@@ -12,10 +13,11 @@ import ast.Statement;
  * @author Rohan Thakur
  * @version 10/22/21
  */
-public class ParamsStatementPair
+public class ParamsStatementVarsTriplet
 {
     private List<String> first;
     private Statement second;
+    private List<String> third;
 
     /**
      * ParamsStatementPair constructor for the construction of a pair of a procedure's list of
@@ -25,10 +27,11 @@ public class ParamsStatementPair
      * @param second the Statement object that represents the statement to be executed when the
      * procedure is called
      */
-    public ParamsStatementPair(List<String> first, Statement second)
+    public ParamsStatementVarsTriplet(List<String> first, Statement second, List<String> third)
     {
         this.first = first;
         this.second = second;
+        this.third = third;
     }
 
     /**
@@ -49,5 +52,10 @@ public class ParamsStatementPair
     public Statement getSecond()
     {
         return this.second;
+    }
+
+    public List<String> getThird()
+    {
+        return this.third;
     }
 }

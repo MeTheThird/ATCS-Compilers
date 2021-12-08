@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import ast.Statement;
-
+// TODO: update class documentation (incl. class header esp. the date)
 /**
  * Environment manages creating, updating, and fetching variables and procedures
  *
@@ -14,7 +14,7 @@ import ast.Statement;
 public class Environment
 {
     private HashMap<String, Integer> vars;
-    private HashMap<String, ParamsStatementPair> procedures;
+    private HashMap<String, ParamsStatementVarsTriplet> procedures;
     private Environment parentEnv;
 
     /**
@@ -26,7 +26,7 @@ public class Environment
     public Environment(Environment parentEnv)
     {
         this.vars = new HashMap<String, Integer>();
-        this.procedures = new HashMap<String, ParamsStatementPair>();
+        this.procedures = new HashMap<String, ParamsStatementVarsTriplet>();
         this.parentEnv = parentEnv;
     }
 
@@ -89,11 +89,12 @@ public class Environment
      * @param params the list of parameters for the input procedure
      * @param stmt the statement that calling the input procedure will execute
      */
-    public void setProcedure(String procedure, List<String> params, Statement stmt)
+    public void setProcedure(String procedure, List<String> params, Statement stmt,
+            List<String> localVars)
     {
         if (this.parentEnv == null)
-            this.procedures.put(procedure, new ParamsStatementPair(params, stmt));
-        else this.parentEnv.setProcedure(procedure, params, stmt);
+            this.procedures.put(procedure, new ParamsStatementVarsTriplet(params, stmt, localVars));
+        else this.parentEnv.setProcedure(procedure, params, stmt, localVars);
     }
 
     /**
@@ -120,5 +121,11 @@ public class Environment
     {
         if (this.parentEnv == null) return this.procedures.get(procedure).getFirst();
         return this.parentEnv.getParams(procedure);
+    }
+
+    public List<String> getLocalVars(String procedure)
+    {
+        if (this.parentEnv == null) return this.procedures.get(procedure).getThird();
+        return this.parentEnv.getLocalVars(procedure);
     }
 }

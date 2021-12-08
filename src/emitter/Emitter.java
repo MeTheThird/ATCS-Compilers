@@ -1,7 +1,6 @@
 package emitter;
 
 import java.io.*;
-import java.util.HashMap;
 
 import ast.ProcedureDeclaration;
 // TODO: update class documentation (check class header too, including the date)
@@ -16,6 +15,7 @@ public class Emitter
     private PrintWriter out;
     private int counter;
     private ProcedureDeclaration context;
+    private int excessStackHeight;
 
     /**
      * Emitter constructor for the construction of an Emitter that writes to a new file with a given
@@ -35,6 +35,7 @@ public class Emitter
         }
         counter = 0;
         context = null;
+        excessStackHeight = 0;
     }
 
     /**
@@ -60,6 +61,7 @@ public class Emitter
     public void setProcedureContext(ProcedureDeclaration proc)
     {
         this.context = proc;
+        this.excessStackHeight = 0;
     }
 //clear current procedure context (remember null) 
     public void clearProcedureContext()
@@ -71,7 +73,9 @@ public class Emitter
     {
         if (this.context != null)
         {
+            if (varName.equals(this.context.getName())) return true;
             for (String var : this.context.getParams()) if (varName.equals(var)) return true;
+            for (String var : this.context.getLocalVars()) if (varName.equals(var)) return true;
         }
         return false;
     }
@@ -81,11 +85,17 @@ public class Emitter
 // being compiled
     public int getOffset(String localVarName)
     {
-        for (int i = 0; i < context.getParams().size() - 1; i++)
+        for (int i = 0; i < context.getLocalVars().size(); i++)
+            if (localVarName.equals(context.getLocalVars().get(i)))
+                return 4 * (context.getLocalVars().size() - 1 - i) + excessStackHeight;
+
+        for (int i = 0; i < context.getParams().size(); i++)
             if (localVarName.equals(context.getParams().get(i)))
-                return 4 * (context.getParams().size() - 1 - i);
-        assert(localVarName.equals(context.getParams().get(context.getParams().size() - 1)));
-        return 0;
+                return 4 * (context.getParams().size() + context.getLocalVars().size() - i) + 
+                    excessStackHeight;
+
+        assert(localVarName.equals(context.getName()));
+        return excessStackHeight;
     }
 
     /**
@@ -97,6 +107,7 @@ public class Emitter
     {
         this.emit("sub $sp $sp 4\t# pushes " + reg + " onto the stack");
         this.emit("sw " + reg + " ($sp)");
+        this.excessStackHeight += 4;
     }
 
     /**
@@ -108,6 +119,7 @@ public class Emitter
     {
         this.emit("lw " + reg + " ($sp)\t# pops the top of the stack into " + reg);
         this.emit("add $sp $sp 4");
+        this.excessStackHeight -= 4;
     }
 
     /**

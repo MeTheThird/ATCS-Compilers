@@ -103,7 +103,16 @@ public class Compiler
     private void compile(Assignment assignment)
     {
         compile(assignment.getExp());
-        e.emit("sw $v0 var" + assignment.getVar() + "\t# stores $v0 in var" + assignment.getVar());
+        if (e.isLocalVariable(assignment.getVar()))
+        {
+            e.emit("sw $v0 " + e.getOffset(assignment.getVar()) + "($sp)\t# stores $v0 in the " + 
+                    "local variable " + assignment.getVar());
+        }
+        else
+        {
+            e.emit("sw $v0 var" + assignment.getVar() + "\t# stores $v0 in the global variable " + 
+                    "var" + assignment.getVar());
+        }
     }
 
     /**
@@ -138,9 +147,17 @@ public class Compiler
 
     private void compile(ProcedureDeclaration procedure)
     {
-        e.setProcedureContext(procedure);
         e.emit("proc" + procedure.getName() + ":\t# begins the procedure " + procedure.getName());
+        e.emit("li $v0 0\t# loads 0 into $v0 to use as this procedure's return value on the stack");
+        e.emitPush("$v0");
+        for (String var : procedure.getLocalVars())
+        {
+            e.emit("# stores " + var + " as a local variable on the stack");
+            e.emitPush("$v0");
+        }
+        e.setProcedureContext(procedure);
         compile(procedure.getStmt());
+        e.emitPop("$v0");
         e.emit("jr $ra");
         e.clearProcedureContext();
     }

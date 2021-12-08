@@ -1,7 +1,7 @@
 package ast;
 
 import java.util.List;
-
+// TODO: update class documentation (incl. class header esp. the date)
 /**
  * ProcedureDeclaration represents the declaration of a procedure
  * 
@@ -12,6 +12,7 @@ public class ProcedureDeclaration extends Statement
 {
     private String name;
     private List<String> params;
+    private List<String> localVars;
     private Statement stmt;
 
     /**
@@ -23,10 +24,12 @@ public class ProcedureDeclaration extends Statement
      * @param stmt the Statement object that represents the statement to be executed when the
      * procedure is called
      */
-    public ProcedureDeclaration(String name, List<String> params, Statement stmt)
+    public ProcedureDeclaration(String name, List<String> params, List<String> localVars,
+            Statement stmt)
     {
         this.name = name;
         this.params = params;
+        this.localVars = localVars;
         this.stmt = stmt;
     }
 
@@ -48,6 +51,11 @@ public class ProcedureDeclaration extends Statement
     public List<String> getParams()
     {
         return this.params;
+    }
+
+    public List<String> getLocalVars()
+    {
+        return this.localVars;
     }
 
     /**

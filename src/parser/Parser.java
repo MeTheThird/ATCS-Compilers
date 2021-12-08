@@ -6,7 +6,7 @@ import ast.*;
 import ast.Number;
 import scanner.ScanErrorException;
 import scanner.Scanner;
-
+// TODO: update class documentation (incl. class header esp. date)
 /**
  * Parser parses the input lexemes from an instance of the Scanner class
  *
@@ -74,9 +74,21 @@ public class Parser
      */
     public Program parseProgram()
     {
-        List<String> vars = new ArrayList<String>();
-        List<ProcedureDeclaration> procedures = new ArrayList<ProcedureDeclaration>();
+        List<String> vars = parseVars();
+        List<ProcedureDeclaration> procedures = parseProcedureDeclarations();
         List<Statement> stmts = new ArrayList<Statement>();
+
+        while (!currentToken.equals("END"))
+        {
+            Statement stmt = parseStatement();
+            stmts.add(stmt);
+        }
+        return new Program(vars, procedures, stmts);
+    }
+
+    private List<String> parseVars()
+    {
+        List<String> vars = new ArrayList<String>();
 
         while (currentToken.equals("VAR"))
         {
@@ -89,6 +101,12 @@ public class Parser
             }
             eat(";");
         }
+        return vars;
+    }
+
+    private List<ProcedureDeclaration> parseProcedureDeclarations()
+    {
+        List<ProcedureDeclaration> procedures = new ArrayList<ProcedureDeclaration>();
 
         while (currentToken.equals("PROCEDURE"))
         {
@@ -110,18 +128,12 @@ public class Parser
             }
             eat(")");
             eat(";");
+            List<String> localVars = parseVars();
             Statement stmt = parseStatement();
 
-            procedures.add(new ProcedureDeclaration(procedureName, params, stmt));
+            procedures.add(new ProcedureDeclaration(procedureName, params, localVars, stmt));
         }
-
-        while (!currentToken.equals("END"))
-        {
-            Statement stmt = parseStatement();
-            stmts.add(stmt);
-        }
-
-        return new Program(vars, procedures, stmts);
+        return procedures;
     }
 
     /**
