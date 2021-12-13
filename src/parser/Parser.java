@@ -6,12 +6,12 @@ import ast.*;
 import ast.Number;
 import scanner.ScanErrorException;
 import scanner.Scanner;
-// TODO: update class documentation (incl. class header esp. date)
+
 /**
  * Parser parses the input lexemes from an instance of the Scanner class
  *
  * @author Rohan Thakur
- * @version 10/22/21
+ * @version 12/13/21
  */
 public class Parser
 {
@@ -86,6 +86,14 @@ public class Parser
         return new Program(vars, procedures, stmts);
     }
 
+    /**
+     * Parses the current variable declarations
+     *
+     * @precondition currentToken begins a variable declaration
+     * @postcondition currentToken has advanced past the current variable declarations, and all of
+     * the tokens associated with the current variable declarations have been eaten
+     * @return a List object of Strings containing the names of the variables that have been parsed
+     */
     private List<String> parseVars()
     {
         List<String> vars = new ArrayList<String>();
@@ -104,6 +112,15 @@ public class Parser
         return vars;
     }
 
+    /**
+     * Parses the procedure declarations
+     * 
+     * @precondition currentToken begins a procedure declaration
+     * @postcondition currentToken has advanced past all procedure declarations, and all of the
+     * token associated with the procedure declarations have been eaten
+     * @return a List object of ProcedureDeclaration objects representing the procedure declarations
+     * that have been parsed
+     */
     private List<ProcedureDeclaration> parseProcedureDeclarations()
     {
         List<ProcedureDeclaration> procedures = new ArrayList<ProcedureDeclaration>();

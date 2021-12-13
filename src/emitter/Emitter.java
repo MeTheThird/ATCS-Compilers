@@ -3,12 +3,12 @@ package emitter;
 import java.io.*;
 
 import ast.ProcedureDeclaration;
-// TODO: update class documentation (check class header too, including the date)
+
 /**
  * Emitter emits lines of MIPS Assembly code to an output file
  * 
  * @author Ms. Datar and Rohan Thakur
- * @version 11/19/21
+ * @version 12/13/21
  */
 public class Emitter
 {
@@ -57,18 +57,33 @@ public class Emitter
     {
         out.close();
     }
-//remember proc as current procedure context
+
+    /**
+     * Remembers the input ProcedureDeclaration as the current procedure context, resets the stored
+     * excess stack height counter to zero
+     * 
+     * @param proc the input ProcedureDeclaration
+     */
     public void setProcedureContext(ProcedureDeclaration proc)
     {
         this.context = proc;
         this.excessStackHeight = 0;
     }
-//clear current procedure context (remember null) 
+
+    /**
+     * Clears the current procedure context (i.e. stores null as the current procedure context)
+     */
     public void clearProcedureContext()
     {
         this.context = null;
     }
 
+    /**
+     * Tells whether the input variable is a local variable or not
+     * 
+     * @param varName the input variable name
+     * @return true if the input variable is a local variable, false otherwise
+     */
     public boolean isLocalVariable(String varName)
     {
         if (this.context != null)
@@ -80,9 +95,16 @@ public class Emitter
         return false;
     }
 
-//precondition: localVarName is the name of a local
-// variable for the procedure currently
-// being compiled
+    /**
+     * Gets the amount by which the stack pointer needs to be offset to access the input variable's
+     * value
+     *
+     * @param localVarName the name of the input variable
+     * @precondition localVarName is the name of a local variable for the procedure currently being
+     * compiled
+     * @return the amount by which the stack pointer must be offset to access the input variable's
+     * value in the output MIPS code
+     */
     public int getOffset(String localVarName)
     {
         for (int i = 0; i < context.getLocalVars().size(); i++)

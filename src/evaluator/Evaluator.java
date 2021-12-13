@@ -3,12 +3,12 @@ package evaluator;
 import ast.*;
 import ast.Number;
 import environment.Environment;
-// TODO: update class documentation (incl. class header esp. the date)
+
 /**
  * Evaluator executes Programs comprised of AST Statements and Expressions
  * 
  * @author Rohan Thakur
- * @version 10/22/21
+ * @version 12/13/21
  */
 public class Evaluator
 {
@@ -114,8 +114,11 @@ public class Evaluator
         ProcedureCall procedureCall = (ProcedureCall) exp;
         Environment procedureEnv;
 
+        // instantiates the environment for the procedure call
         if (env.getParentEnv() == null) procedureEnv = new Environment(env);
         else procedureEnv = new Environment(env.getParentEnv());
+
+        // declares the return variables and argument variables
         assert (env.getParams(procedureCall.getName()).size() == procedureCall.getArgs().size());
         procedureEnv.declareVariable(procedureCall.getName(), 0);
         for (int i = 0; i < procedureCall.getArgs().size(); i++)
@@ -124,6 +127,7 @@ public class Evaluator
             procedureEnv.declareVariable(env.getParams(procedureCall.getName()).get(i), value);
         }
 
+        // declares local variables
         for (int i = 0; i < env.getLocalVars(procedureCall.getName()).size(); i++)
             procedureEnv.declareVariable(env.getLocalVars(procedureCall.getName()).get(i), 0);
 

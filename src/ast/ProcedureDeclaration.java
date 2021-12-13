@@ -1,12 +1,12 @@
 package ast;
 
 import java.util.List;
-// TODO: update class documentation (incl. class header esp. the date)
+
 /**
  * ProcedureDeclaration represents the declaration of a procedure
  * 
  * @author Rohan Thakur
- * @version 10/22/21
+ * @version 12/13/21
  */
 public class ProcedureDeclaration extends Statement
 {
@@ -17,10 +17,11 @@ public class ProcedureDeclaration extends Statement
 
     /**
      * ProcedureDeclaration constructor for the construction of a procedure with the input name,
-     * list of parameters, and statement to execute when called
+     * list of parameters, list of local variables, and statement to execute when called
      *
      * @param name the name of the procedure
      * @param params the List object of Strings that represents the procedure's parameters
+     * @param localVars the List object of Strings that represents the procedure's local variables
      * @param stmt the Statement object that represents the statement to be executed when the
      * procedure is called
      */
@@ -53,6 +54,11 @@ public class ProcedureDeclaration extends Statement
         return this.params;
     }
 
+    /**
+     * Gets the procedure's list of local variables
+     * 
+     * @return the List object of Strings that represents the procedure's local variables
+     */
     public List<String> getLocalVars()
     {
         return this.localVars;

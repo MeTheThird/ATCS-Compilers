@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import ast.Statement;
-// TODO: update class documentation (incl. class header esp. the date)
+
 /**
  * Environment manages creating, updating, and fetching variables and procedures
  *
  * @author Rohan Thakur
- * @version 10/22/21
+ * @version 12/13/21
  */
 public class Environment
 {
@@ -18,7 +18,7 @@ public class Environment
     private Environment parentEnv;
 
     /**
-     * Environment constructor fro the construction of an Environment object to use for storing
+     * Environment constructor for the construction of an Environment object to use for storing
      * procedures and variables, with a reference to its parent environment
      *
      * @param parentEnv the parent environment of the current Environment object
@@ -88,6 +88,7 @@ public class Environment
      * @param procedure the name of the input procedure
      * @param params the list of parameters for the input procedure
      * @param stmt the statement that calling the input procedure will execute
+     * @param localVars the list of local variables for the input procedure
      */
     public void setProcedure(String procedure, List<String> params, Statement stmt,
             List<String> localVars)
@@ -123,6 +124,13 @@ public class Environment
         return this.parentEnv.getParams(procedure);
     }
 
+    /**
+     * Gets the list of local variables for the input procedure
+     *
+     * @param procedure the name of the input procedure
+     * @return the List object of Strings that represents the list of local variables for the input
+     * procedure
+     */
     public List<String> getLocalVars(String procedure)
     {
         if (this.parentEnv == null) return this.procedures.get(procedure).getThird();

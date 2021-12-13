@@ -3,15 +3,15 @@ package environment;
 import java.util.List;
 
 import ast.Statement;
-// TODO: update class documentation (incl. the class header esp. the date)
-// TODO: this class's name was changed, so update that in the documentation
+
 /**
- * ParamsStatementPair represents the pair of the List object representing a procedure's parameters
- * and the Statement object representing the statement that calling the procedure will execute
- * during the evaluation phase
- * 
+ * ParamsStatementVarsTriplet represents the triplet of the List object representing a procedure's
+ * parameters, the Statement object representing the statement that calling the procedure will
+ * execute during the evaluation phase, and the List object representing the procedure's local
+ * variables
+ *
  * @author Rohan Thakur
- * @version 10/22/21
+ * @version 12/13/21
  */
 public class ParamsStatementVarsTriplet
 {
@@ -20,12 +20,15 @@ public class ParamsStatementVarsTriplet
     private List<String> third;
 
     /**
-     * ParamsStatementPair constructor for the construction of a pair of a procedure's list of
-     * parameters and its corresponding statement object to be executed when the procedure is called
+     * ParamsStatementVarsTriplet constructor for the construction of a triplet of a procedure's
+     * list of parameters, its corresponding statement object to be executed when the procedure is
+     * called, and its list of local variables
      *
      * @param first the List object of Strings that represents the procedure's list of parameters
      * @param second the Statement object that represents the statement to be executed when the
      * procedure is called
+     * @param third the List object of Strings that represents the procedure's list of local
+     * variables
      */
     public ParamsStatementVarsTriplet(List<String> first, Statement second, List<String> third)
     {
@@ -35,9 +38,10 @@ public class ParamsStatementVarsTriplet
     }
 
     /**
-     * Gets the list of parameters in the ParamsStatementPair object
-     * 
-     * @return the List object of Strings in the current ParamsStatementPair object
+     * Gets the list of parameters in the ParamsStatementVarsTriplet object
+     *
+     * @return the List object of Strings in the first slot of the current
+     * ParamsStatementVarsTriplet object
      */
     public List<String> getFirst()
     {
@@ -45,15 +49,22 @@ public class ParamsStatementVarsTriplet
     }
 
     /**
-     * Gets the statement in the ParamsStatementPair object
-     * 
-     * @return the Statement object in the current ParamsStatementPair object
+     * Gets the statement in the ParamsStatementVarsTriplet object
+     *
+     * @return the Statement object in the second slot of the current ParamsStatementVarsTriplet
+     * object
      */
     public Statement getSecond()
     {
         return this.second;
     }
 
+    /**
+     * Gets the list of local variables in the ParamsStatementVarsTriplet object
+     * 
+     * @return the List object of Strings in the third slot of the current
+     * ParamsStatementVarsTriplet object
+     */
     public List<String> getThird()
     {
         return this.third;

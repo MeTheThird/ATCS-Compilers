@@ -5,12 +5,12 @@ import java.time.LocalDate;
 import ast.*;
 import ast.Number;
 import emitter.Emitter;
-// TODO: update class documentation including class header (esp the version)
+
 /**
  * Compiler compiles Program objects into MIPS Assembly code
  * 
  * @author Rohan Thakur
- * @version 12/2/21
+ * @version 12/13/21
  */
 public class Compiler
 {
@@ -145,6 +145,11 @@ public class Compiler
         e.emit(endLabel + ":");
     }
 
+    /**
+     * Compiles the input ProcedureDeclaration
+     * 
+     * @param procedure the input ProcedureDeclaration to compile
+     */
     private void compile(ProcedureDeclaration procedure)
     {
         e.emit("proc" + procedure.getName() + ":\t# begins the procedure " + procedure.getName());
@@ -157,7 +162,6 @@ public class Compiler
         }
         e.setProcedureContext(procedure);
         compile(procedure.getStmt());
-        e.emitPop("$v0");
         e.emit("jr $ra");
         e.clearProcedureContext();
     }
@@ -221,6 +225,11 @@ public class Compiler
         }
     }
 
+    /**
+     * Compiles the input ProcedureCall
+     * 
+     * @param procedureCall the input ProcedureCall to compile
+     */
     private void compile(ProcedureCall procedureCall)
     {
         e.emitPush("$ra");
@@ -231,6 +240,7 @@ public class Compiler
         }
         e.emit("jal proc" + procedureCall.getName() + "\t# calls " + procedureCall.getName());
         for (int i = 0; i < procedureCall.getArgs().size(); i++) e.emitPop("$t0");
+        e.emitPop("$v0");
         e.emitPop("$ra");
     }
 
