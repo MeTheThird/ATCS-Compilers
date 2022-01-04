@@ -239,8 +239,8 @@ public class Compiler
             e.emitPush("$v0");
         }
         e.emit("jal proc" + procedureCall.getName() + "\t# calls " + procedureCall.getName());
-        for (int i = 0; i < procedureCall.getArgs().size(); i++) e.emitPop("$t0");
         e.emitPop("$v0");
+        for (int i = 0; i < procedureCall.getArgs().size(); i++) e.emitPop("$t0");
         e.emitPop("$ra");
     }
 
